@@ -45,8 +45,8 @@ public class runHaar {
         // Per iteration the size of the features increase
         for(int round = 1; round<iterations+1;round++) { // Represents the increase in size for each feature
 
-            MakeFeatures run2 = new MakeFeatures(round);
-            haarFeatures = run2.createHaarPixel(round); // Now we have the four de Haar types
+            MakeFeatures run2 = new MakeFeatures(round,round);
+            haarFeatures = run2.createHaarPixel(round,round); // Now we have the four de Haar types
 
             int[][] type1 = (int[][]) haarFeatures[0]; // Black, white horizontal
             int[][] type2 = rotateFeature(type1,1); // Black, white vertical

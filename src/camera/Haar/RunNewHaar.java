@@ -45,49 +45,50 @@ public class RunNewHaar {
         Hashtable<HaarFeature, int[]> my_dict = new Hashtable<HaarFeature, int[]>();
 
         // Per iteration the size of the features increase
-        for(int round = 1; round<iterations; round++) { // Represents the increase in size for each feature
+        for(int roundx = 1; roundx<iterations; roundx++) { // Represents the increase in size for each feature
+            for(int roundy = 1; roundy<iterations; roundy++) {
+                MakeFeatures run2 = new MakeFeatures(roundx,roundy);
+                haarFeatures = run2.createHaarPixel(roundx,roundy); // Now we have the four de Haar types
 
-            MakeFeatures run2 = new MakeFeatures(round);
-            haarFeatures = run2.createHaarPixel(round); // Now we have the four de Haar types
-
-            int[][] type1 = (int[][]) haarFeatures[0]; // Black, white horizontal
-            int[][] type2 = rotateFeature(type1,1); // Black, white vertical
-            int[][] type3 = (int[][]) haarFeatures[1]; // White black white horizontal
-            int[][] type4 = rotateFeature(type3, 1); // White black white vertical
-            int[][] type5 = (int[][]) haarFeatures[2]; // Black and white diagonals
+                int[][] type1 = (int[][]) haarFeatures[0]; // Black, white horizontal
+                int[][] type2 = rotateFeature(type1, 1); // Black, white vertical
+                int[][] type3 = (int[][]) haarFeatures[1]; // White black white horizontal
+                int[][] type4 = rotateFeature(type3, 1); // White black white vertical
+                int[][] type5 = (int[][]) haarFeatures[2]; // Black and white diagonals
 
 
-            // Can outcomment these
+                // Can outcomment these
 //            printArray(type1);
 //            printArray(type2);
 //            printArray(type3);
 //            printArray(type4);
 //            printArray(type5);
 
-            // This coordinate system represents from 0 up until that height and length, so for example
-            // type 1 would go from coordinate = (0,0) to coordinate b = (coor1[0], coor1[1]) and everything in between
-            //System.out.println(image.getWidth() + " " + image.getHeight());
-            int[] coor1 = {imageSize-type1.length+1, imageSize-type1[0].length+1};
-            int[] coor2 = {imageSize-type2.length+1, imageSize-type2[0].length+1};
-            int[] coor3 = {imageSize-type3.length+1, imageSize-type3[0].length+1};
-            int[] coor4 = {imageSize-type4.length+1, imageSize-type4[0].length+1};
-            int[] coor5 = {imageSize-type5.length+1, imageSize-type5[0].length+1};
+                // This coordinate system represents from 0 up until that height and length, so for example
+                // type 1 would go from coordinate = (0,0) to coordinate b = (coor1[0], coor1[1]) and everything in between
+                //System.out.println(image.getWidth() + " " + image.getHeight());
+                int[] coor1 = {imageSize - type1.length + 1, imageSize - type1[0].length + 1};
+                int[] coor2 = {imageSize - type2.length + 1, imageSize - type2[0].length + 1};
+                int[] coor3 = {imageSize - type3.length + 1, imageSize - type3[0].length + 1};
+                int[] coor4 = {imageSize - type4.length + 1, imageSize - type4[0].length + 1};
+                int[] coor5 = {imageSize - type5.length + 1, imageSize - type5[0].length + 1};
 
-            HaarFeature f1 = new HaarFeature(type1, 1, coor1, round);
-            HaarFeature f2 = new HaarFeature(type2, 2, coor2, round);
-            HaarFeature f3 = new HaarFeature(type3, 3, coor3, round);
-            HaarFeature f4 = new HaarFeature(type4, 4, coor4, round);
-            HaarFeature f5 = new HaarFeature(type5, 5, coor5, round);
+                HaarFeature f1 = new HaarFeature(type1, 1, coor1, roundx,roundy);
+                HaarFeature f2 = new HaarFeature(type2, 2, coor2, roundx,roundy);
+                HaarFeature f3 = new HaarFeature(type3, 3, coor3, roundx,roundy);
+                HaarFeature f4 = new HaarFeature(type4, 4, coor4, roundx,roundy);
+                HaarFeature f5 = new HaarFeature(type5, 5, coor5, roundx,roundy);
 
-            my_dict.put(f1, coor1);
-            my_dict.put(f2, coor2);
-            my_dict.put(f3, coor3);
-            my_dict.put(f4, coor4);
-            my_dict.put(f5, coor5);
+                my_dict.put(f1, coor1);
+                my_dict.put(f2, coor2);
+                my_dict.put(f3, coor3);
+                my_dict.put(f4, coor4);
+                my_dict.put(f5, coor5);
 
-            //  Must be a way to use the 2d array of sums, possible save/recognize the features and locations based on threshold
-            // Continue on Viola Jones algorithm
-            // Option could be to have a HashMap where the key is the feature (and its size) and it maps to the coordinate location..
+                //  Must be a way to use the 2d array of sums, possible save/recognize the features and locations based on threshold
+                // Continue on Viola Jones algorithm
+                // Option could be to have a HashMap where the key is the feature (and its size) and it maps to the coordinate location..
+            }
         }
 
         System.out.println("Size of dictionary: " + my_dict.size());

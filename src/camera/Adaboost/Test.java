@@ -206,7 +206,7 @@ public class Test {
                                 dataPoint.weight /= next_total_weight;
                             }
                         }
-                        HaarFeature best_feature = new HaarFeature(entry.getKey().matrix,entry.getKey().feature_type, entry.getKey().coords, entry.getKey().scalar);
+                        HaarFeature best_feature = new HaarFeature(entry.getKey().matrix,entry.getKey().feature_type, entry.getKey().coords, entry.getKey().x_scalar, entry.getKey().y_scalar);
                         best_feature.x = x;
                         best_feature.y = y;
                         best_feature.threshold = best_threshold;

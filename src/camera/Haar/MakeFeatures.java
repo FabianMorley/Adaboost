@@ -2,29 +2,25 @@ package camera.Haar;
 
 public class MakeFeatures {
 
-    int round;
+    int roundx;
+    int roundy;
 
-    /**
-     *
-     * @param round
-     */
-    public MakeFeatures(int round) {
+    public MakeFeatures(int roundx, int roundy) {
 
-        this.round = round;
+        this.roundx = roundx;
+        this.roundy = roundy;
     }
 
     /**
      *
-     * @param round
-     * @return
      */
-    public Object[] createHaarPixel(int round){
+    public Object[] createHaarPixel(int roundx, int roundy){
         //TODO - Complete the creation of haar features where you resize each one of the images
 
         //System.out.println("New set of features of sizes: "+ round+ "x" + (2*round)+ " and " + round+"x"+(3*round) + " and " + (2*round) + "x" + (2*round));
 
         // Type 1, black and white, 2 pixel. Which has 4 sub types: two horizontals and two verticals
-        int[][] type1 = new int[1*round][2*round];
+        int[][] type1 = new int[1*roundx][2*roundy];
         for(int i = 0; i<type1.length; i++){
             for(int j = 0; j<type1[0].length/2; j++){
                 type1[i][j] = 1;
@@ -46,7 +42,7 @@ public class MakeFeatures {
 
 
         // Type 3 - White, black, white. Which has 2 sub types, vertical and horizontal
-        int[][] type3 = new int[1*round][3*round];
+        int[][] type3 = new int[1*roundx][3*roundy];
         for(int i = 0; i<type3.length; i++){
             for(int j = 0; j<type3[0].length/3; j++){
                 type3[i][j] = 1;
@@ -60,7 +56,7 @@ public class MakeFeatures {
 
 
         // Type 4 - White/Black diagonal. Which has 2 sub types. white diagonal left and right
-        int[][] type4 = new int[2*round][2*round];
+        int[][] type4 = new int[2*roundx][2*roundy];
         for(int i = 0; i<type4.length/2; i++){
             for(int j = 0; j<type4[0].length/2; j++){
                 type4[i][j] = 1;
