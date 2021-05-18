@@ -105,7 +105,15 @@ public class Test {
         int boosting_rounds = 1;
         for (int t = 0; t < boosting_rounds; t++) {
             // ITERATE THROUGH EVERY FEATURE AND APPLY BELOW
+            // Should have
+            // 43200 of type 1
+            // 43200 of type 2
+            // 27600 of type 3
+            // 27600 of type 4
+            // 20736 of type 5
+            // 162336 total features for a 24x24 image
             int counter = 0; // Feature number
+
             for (Map.Entry<HaarFeature, int[]> entry : haar_features.entrySet()){
                 for(int x = 0; x < entry.getValue()[0]; x++){
                     for(int y = 0; y < entry.getValue()[1]; y++){
@@ -231,9 +239,10 @@ public class Test {
             }
             fw.close();
 
-            System.out.println("#training_size: " + training.size() + " #thresholds: " + best_features.size());
+            System.out.println("#training_size: " + training.size() + " #thresholds: " + best_features.size()); // Number of thresholds here should be number of acceptable features as its the best threshold per feature.
         }
-        System.out.println("Repeat counter: " + repeat_counter);
+        //System.out.println("Repeat threshold counter: " + repeat_counter);
+
         // 3. Output the final classifier H(x)
 
     }

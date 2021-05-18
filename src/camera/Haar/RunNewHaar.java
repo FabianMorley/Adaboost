@@ -67,11 +67,11 @@ public class RunNewHaar {
             // This coordinate system represents from 0 up until that height and length, so for example
             // type 1 would go from coordinate = (0,0) to coordinate b = (coor1[0], coor1[1]) and everything in between
             //System.out.println(image.getWidth() + " " + image.getHeight());
-            int[] coor1 = {imageSize-type1.length, imageSize-type1[0].length};
-            int[] coor2 = {imageSize-type2.length, imageSize-type2[0].length};
-            int[] coor3 = {imageSize-type3.length, imageSize-type3[0].length};
-            int[] coor4 = {imageSize-type4.length, imageSize-type4[0].length};
-            int[] coor5 = {imageSize-type5.length, imageSize-type5[0].length};
+            int[] coor1 = {imageSize-type1.length+1, imageSize-type1[0].length+1};
+            int[] coor2 = {imageSize-type2.length+1, imageSize-type2[0].length+1};
+            int[] coor3 = {imageSize-type3.length+1, imageSize-type3[0].length+1};
+            int[] coor4 = {imageSize-type4.length+1, imageSize-type4[0].length+1};
+            int[] coor5 = {imageSize-type5.length+1, imageSize-type5[0].length+1};
 
             HaarFeature f1 = new HaarFeature(type1, 1, coor1, round);
             HaarFeature f2 = new HaarFeature(type2, 2, coor2, round);
