@@ -15,6 +15,11 @@ public class HaarFeature {
     public double threshold;
     public double threshold_error;
 
+    public double tp;
+    public double tn;
+    public double fp;
+    public double fn;
+
     public HaarFeature(int[][] matrix, int feature_type, int[] coords, int scalar){
         this.matrix = matrix;
         this.feature_type = feature_type;
@@ -23,8 +28,16 @@ public class HaarFeature {
     }
 
     public void toFile(FileWriter fw) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{type:").append(feature_type).append(",scalar:").append(scalar).append(",x:").append(x).append(",y:").append(y).append(",threshold:").append(threshold).append(",error:").append(threshold_error).append("\n");
-        fw.write(sb.toString());
+        fw.write("{type:" + feature_type + ",scalar:" + scalar + ",x:" + x + ",y:" + y + ",threshold:" + threshold + ",error:" + threshold_error + "," + metrics() + "}\n");
+    }
+
+    public String metrics(){
+        // Classification metrics
+        double recall = tp / (tp+fn);
+        double precision = tp / (tp+fp);
+        double accuracy = (tp + tn)/(tp+tn+fp+fn);
+        double f1score = (2*tp)/(2*tp+fp+fn);
+
+        return "recall:"+recall+",precision:"+precision+",accuracy:"+accuracy+",f1score:"+f1score;
     }
 }

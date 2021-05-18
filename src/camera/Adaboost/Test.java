@@ -15,11 +15,14 @@ import java.util.*;
 import java.util.List;
 
 public class Test {
+
     public static void main(String[] args) throws IOException {
 
         // STEPS
         // 1. Organise all data into a dataset
         System.out.println("Creating dataset");
+        final long sTime1 = System.currentTimeMillis();
+
         File neg_dir = new File("src/camera/Adaboost/data/neg");
         File pos_dir = new File("src/camera/Adaboost/data/pos");
 
@@ -40,7 +43,12 @@ public class Test {
             }
         }
 
+        final long eTime1 = System.currentTimeMillis();
+        System.out.println("Created dataset - " + (eTime1 - sTime1) + "ms");
+
         System.out.println("Cleaning dataset");
+        final long sTime2 = System.currentTimeMillis();
+
         int imageSize = 24;
         FixImage fixImage = new FixImage();
         for (DataPoint point : dataset){
@@ -48,6 +56,9 @@ public class Test {
             int[][] img_mat = IntegralImage.asMatrix(fixImage.resizeImage(imageSize,imageSize));
             point.image_mat = IntegralImage.integralImage(img_mat); // This is the integral image as a matrix of current image
         }
+
+        final long eTime2 = System.currentTimeMillis();
+        System.out.println("Cleaned dataset - " + (eTime2 - sTime2) + "ms");
 
         // 2. Split into training and test data
 
@@ -69,6 +80,8 @@ public class Test {
 
         // 3. Get all of the possible Haar features
         System.out.println("Create Haar features");
+        final long sTime3 = System.currentTimeMillis();
+
         RunNewHaar haar_runner = new RunNewHaar();
         Hashtable<HaarFeature, int[]> haar_features = haar_runner.runner();
 
@@ -80,6 +93,8 @@ public class Test {
             datapoint.weight = 1.0/training.size();
         }
 
+        final long eTime3 = System.currentTimeMillis();
+        System.out.println("Created " + haar_features.size() + " Haar features - " + (eTime3 - sTime3) + "ms");
 
         // 2. For t = 1 to T do: (where T is number of rounds aka. how many weak classifiers to cascade)
         int repeat_counter = 0; // How many thresholds are repeated (for debugging purposes)
@@ -90,11 +105,12 @@ public class Test {
         int boosting_rounds = 1;
         for (int t = 0; t < boosting_rounds; t++) {
             // ITERATE THROUGH EVERY FEATURE AND APPLY BELOW
+            int counter = 0; // Feature number
             for (Map.Entry<HaarFeature, int[]> entry : haar_features.entrySet()){
                 for(int x = 0; x < entry.getValue()[0]; x++){
                     for(int y = 0; y < entry.getValue()[1]; y++){
                         final long startTime = System.currentTimeMillis();
-
+                        counter++;
                         // Get all potential thresholds from unique values
                         List<Integer> thresholds = new ArrayList<>();
                         for(DataPoint datapoint : training){
@@ -106,17 +122,22 @@ public class Test {
                             }
                         }
 
-                        //TODO implement optimisation of threshold to minimise objective function (error function)
                         double min_error = Double.POSITIVE_INFINITY;
                         double best_threshold = 0;
+
+                        double best_TP = 0;
+                        double best_TN = 0;
+                        double best_FP = 0;
+                        double best_FN = 0;
+
                         for(int threshold : thresholds){
                             Classifier classifier = new Classifier(entry.getKey(), threshold);
 
                             List<Classifier> classifiers = new ArrayList<>();
-                            int true_positive = 0;
-                            int true_negative = 0;
-                            int false_positive = 0;
-                            int false_negative = 0;
+                            double true_positive = 0;
+                            double true_negative = 0;
+                            double false_positive = 0;
+                            double false_negative = 0;
 
                             for (DataPoint datapoint : training) {
                                 classifier.feature_integral = haar_runner.featureSum(datapoint.image_mat, x, y, entry.getKey());
@@ -148,22 +169,19 @@ public class Test {
                                 error += datapoint.weight * loss;
                             }
                             error /= current_total_weight;
+
                             if(error < min_error){
                                 min_error = error;
                                 best_threshold = threshold;
+                                best_TP = true_positive;
+                                best_TN = true_negative;
+                                best_FP = false_positive;
+                                best_FN = false_negative;
                             }
 //                        System.out.println("Error: " + error);
 
-                            // Classification metrics
-//                        double recall = (double) true_positive / (true_positive+false_negative);
-//                        double precision = (double) true_positive / (true_positive+false_positive);
-//                        double accuracy = (double) (true_positive + true_negative)/(true_positive+true_negative+false_positive+false_negative);
-//                        double f1score = (double) (2*true_positive)/(2*true_positive+false_positive+false_negative);
-//
-//                        System.out.println("Recall: " + recall + "\tPrecision: " + precision + "\tAccuracy: " + accuracy + "\tF1 Score: " + f1score);
-
                             //      choose coefficient alpha_t of classifier denoted by alpha_t = (0.5 * ln( (1 - error_t)/error_t )
-                            double alpha = 0.5 * Math.log((1 - error) / error);
+                            double alpha = 0.5 * Math.log((1 - error) / (error));
                             //System.out.println("Alpha: " + alpha);
 
                             //      update weights from step 1 for each datapoint:
@@ -186,10 +204,24 @@ public class Test {
                         best_feature.threshold = best_threshold;
                         best_feature.threshold_error = min_error;
 
+                        // Add classification metrics
+                        best_feature.tp = best_TP;
+                        best_feature.tn = best_TN;
+                        best_feature.fp = best_FP;
+                        best_feature.fn = best_FN;
+
                         best_features.add(best_feature);
 
+                        // Classification metrics
+//                        double recall = (double) true_positive / (true_positive+false_negative);
+//                        double precision = (double) true_positive / (true_positive+false_positive);
+//                        double accuracy = (double) (true_positive + true_negative)/(true_positive+true_negative+false_positive+false_negative);
+//                        double f1score = (double) (2*true_positive)/(2*true_positive+false_positive+false_negative);
+//
+//                        System.out.println("Recall: " + recall + "\tPrecision: " + precision + "\tAccuracy: " + accuracy + "\tF1 Score: " + f1score);
+
                         final long endTime = System.currentTimeMillis();
-                        System.out.println("Execution time for feature: " + (endTime - startTime) + "ms");
+                        System.out.println("["+t+"] Feature " +  + counter + ": " + (endTime - startTime) + "ms");
                     }
                 }
             }
@@ -199,7 +231,7 @@ public class Test {
             }
             fw.close();
 
-            System.out.println("#features: " + haar_features.size() + " #thresholds: " + best_features.size());
+            System.out.println("#training_size: " + training.size() + " #thresholds: " + best_features.size());
         }
         System.out.println("Repeat counter: " + repeat_counter);
         // 3. Output the final classifier H(x)
