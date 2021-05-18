@@ -52,7 +52,7 @@ public class Test {
 
         System.out.println("Split dataset");
         Collections.shuffle(dataset); // Shuffle dataset randomly
-        double data_split = 0.8; // Split into training and test (0.1 = 10% training, 90% test)
+        double data_split = 0.1; // Split into training and test (0.1 = 10% training, 90% test)
         int split_index = (int) (dataset.size()*data_split);
 
         List<DataPoint> training = new ArrayList<>();
@@ -83,23 +83,23 @@ public class Test {
         // 2. For t = 1 to T do: (where T is number of rounds aka. how many weak classifiers to cascade)
         int boosting_rounds = 1;
         for (int t = 0; t < boosting_rounds; t++) {
-            //      h_t = train weak classifier using the data weighted in step 1
-//            // Randomly select a feature
-//            Random random = new Random();
-//            int len = haar_features.size();
-//            int randomIndex = random.nextInt(len);
-//            HaarFeature[] features_s = haar_features.keySet().toArray(new HaarFeature[len]);
-//
-//            int[] coord_interval = features_s[randomIndex].coords;
-//            int randomX = random.nextInt(coord_interval[0]);
-//            int randomY = random.nextInt(coord_interval[1]);
-
             // ITERATE THROUGH EVERY FEATURE AND APPLY BELOW
             for (Map.Entry<HaarFeature, int[]> entry : haar_features.entrySet()){
                 for(int x = 0; x < entry.getValue()[0]; x++){
                     for(int y = 0; y < entry.getValue()[1]; y++){
                         final long startTime = System.currentTimeMillis();
+
+                        // Get all potential thresholds from unique values
+                        List<Integer> thresholds = new ArrayList<>();
+                        for(DataPoint datapoint : training){
+                            int feature_integral = haar_runner.featureSum(datapoint.image_mat, x, y, entry.getKey());
+                            if (!thresholds.contains(feature_integral)){
+                                thresholds.add(feature_integral);
+                            }
+                        }
+
                         //TODO implement optimisation of threshold to minimise objective function (error function)
+                        //for(int threshold : thresholds)
                         Classifier classifier = new Classifier(entry.getKey(), 0);
 
                         List<Classifier> classifiers = new ArrayList<>();
@@ -138,16 +138,15 @@ public class Test {
                             error += datapoint.weight * loss;
                         }
                         error /= current_total_weight;
-                        System.out.println("Error: " + error);
+//                        System.out.println("Error: " + error);
 
-                        System.out.println(false_positive);
                         // Classification metrics
-                        double recall = (double) true_positive / (true_positive+false_negative);
-                        double precision = (double) true_positive / (true_positive+false_positive);
-                        double accuracy = (double) (true_positive + true_negative)/(true_positive+true_negative+false_positive+false_negative);
-                        double f1score = (double) (2*true_positive)/(2*true_positive+false_positive+false_negative);
-
-                        System.out.println("Recall: " + recall + "\tPrecision: " + precision + "\tAccuracy: " + accuracy + "\tF1 Score: " + f1score);
+//                        double recall = (double) true_positive / (true_positive+false_negative);
+//                        double precision = (double) true_positive / (true_positive+false_positive);
+//                        double accuracy = (double) (true_positive + true_negative)/(true_positive+true_negative+false_positive+false_negative);
+//                        double f1score = (double) (2*true_positive)/(2*true_positive+false_positive+false_negative);
+//
+//                        System.out.println("Recall: " + recall + "\tPrecision: " + precision + "\tAccuracy: " + accuracy + "\tF1 Score: " + f1score);
 
                         //      choose coefficient alpha_t of classifier denoted by alpha_t = (0.5 * ln( (1 - error_t)/error_t )
                         double alpha = 0.5 * Math.log((1 - error) / error);
@@ -167,9 +166,8 @@ public class Test {
                             dataPoint.weight /= next_total_weight;
                         }
 
-
                         final long endTime = System.currentTimeMillis();
-                        System.out.println("Execution time for feature " + t + ": " + (endTime - startTime) + "ms");
+                        System.out.println("Execution time for feature: " + (endTime - startTime) + "ms");
                     }
                 }
             }
