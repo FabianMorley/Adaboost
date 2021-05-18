@@ -18,7 +18,6 @@ public class RunNewHaar {
     public boolean correctImageFormat = false;
     public int imageSize = 24;
     public double featureThreshold = 0.80; // Could be used for the recognizing of sums
-
     /**
      * Initializes the Haar method.
      */
@@ -68,17 +67,17 @@ public class RunNewHaar {
             // This coordinate system represents from 0 up until that height and length, so for example
             // type 1 would go from coordinate = (0,0) to coordinate b = (coor1[0], coor1[1]) and everything in between
             //System.out.println(image.getWidth() + " " + image.getHeight());
-            int[] coor1 = {imageSize-type1[0].length+1, imageSize-type1.length+1};
-            int[] coor2 = {imageSize-type2[0].length+1, imageSize-type2.length+1};
-            int[] coor3 = {imageSize-type3[0].length+1, imageSize-type3.length+1};
-            int[] coor4 = {imageSize-type4[0].length+1, imageSize-type4.length+1};
-            int[] coor5 = {imageSize-type5[0].length+1, imageSize-type5.length+1};
+            int[] coor1 = {imageSize-type1.length, imageSize-type1[0].length};
+            int[] coor2 = {imageSize-type2.length, imageSize-type2[0].length};
+            int[] coor3 = {imageSize-type3.length, imageSize-type3[0].length};
+            int[] coor4 = {imageSize-type4.length, imageSize-type4[0].length};
+            int[] coor5 = {imageSize-type5.length, imageSize-type5[0].length};
 
-            HaarFeature f1 = new HaarFeature(type1, 1, coor1);
-            HaarFeature f2 = new HaarFeature(type2, 2, coor2);
-            HaarFeature f3 = new HaarFeature(type3, 3, coor3);
-            HaarFeature f4 = new HaarFeature(type4, 4, coor4);
-            HaarFeature f5 = new HaarFeature(type5, 5, coor5);
+            HaarFeature f1 = new HaarFeature(type1, 1, coor1, round);
+            HaarFeature f2 = new HaarFeature(type2, 2, coor2, round);
+            HaarFeature f3 = new HaarFeature(type3, 3, coor3, round);
+            HaarFeature f4 = new HaarFeature(type4, 4, coor4, round);
+            HaarFeature f5 = new HaarFeature(type5, 5, coor5, round);
 
             my_dict.put(f1, coor1);
             my_dict.put(f2, coor2);
@@ -99,16 +98,16 @@ public class RunNewHaar {
      * Calculates the integral sum for the current image for a given feature
      */
     public int featureSum(int[][] int_img_mat, int x, int y, HaarFeature feature){
-        //TODO: Might need to -1 from x and y if array out of bounds error not sure yet
         //readIm(); // This reads the resized image so we can use its pixels later
 
         // INTEGRAL CALCULATION
         // To find the sum of an area: C + A - B - D, where A-D are the corners of a rectangle starting top left in
         // a clockwise direction
 
-        int width = feature.matrix.length;
-        int height = feature.matrix[0].length;
+        int height = feature.matrix.length;
+        int width = feature.matrix[0].length;
         //System.out.println("Haar Feature: " + width + " x " + height);
+
         try {
             switch (feature.feature_type) {
                 case 1:
@@ -164,14 +163,14 @@ public class RunNewHaar {
 
                     int w3A = int_img_mat[x][y + (width / 3)];
                     int w3B = int_img_mat[x][y + 2 * (width / 3) - 1];
-                    int w3C = int_img_mat[x - height - 1][y + 2 * (width / 3) - 1];
-                    int w3D = int_img_mat[x - height - 1][y + (width / 3)];
+                    int w3C = int_img_mat[x + height - 1][y + 2 * (width / 3) - 1];
+                    int w3D = int_img_mat[x + height - 1][y + (width / 3)];
                     int white3 = w3C + w3A - w3B - w3D;
 
                     int b3Ar = int_img_mat[x][y + 2 * (width / 3)];
                     int b3Br = int_img_mat[x][y + width - 1];
-                    int b3Cr = int_img_mat[x - height - 1][y + width - 1];
-                    int b3Dr = int_img_mat[x - height - 1][y + 2 * (width / 3)];
+                    int b3Cr = int_img_mat[x + height - 1][y + width - 1];
+                    int b3Dr = int_img_mat[x + height - 1][y + 2 * (width / 3)];
                     int black3r = b3Cr + b3Ar - b3Br - b3Dr;
 
                     return ((black3l + black3r) - white3) / (width * height);
@@ -236,7 +235,7 @@ public class RunNewHaar {
                     return ((black5t + black5b) - (white5t + white5b)) / (width * height);
             }
         }catch (IndexOutOfBoundsException e){
-            System.out.println("Unable to compute: " + "width:"+width+" height:"+height );
+            System.out.println("Index Out of Bounds for feature type: " +feature.feature_type+ " dimensions: (" +width + ", " +height+ ") for Position: (" + x + ", " + y + ")");
         }
         return 0;
     }

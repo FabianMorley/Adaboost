@@ -9,12 +9,13 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
 public class Test {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         // STEPS
         // 1. Organise all data into a dataset
@@ -81,6 +82,11 @@ public class Test {
 
 
         // 2. For t = 1 to T do: (where T is number of rounds aka. how many weak classifiers to cascade)
+        int repeat_counter = 0; // How many thresholds are repeated (for debugging purposes)
+
+        FileWriter fw = new FileWriter("features.txt");
+
+        List<HaarFeature> best_features = new ArrayList<>();
         int boosting_rounds = 1;
         for (int t = 0; t < boosting_rounds; t++) {
             // ITERATE THROUGH EVERY FEATURE AND APPLY BELOW
@@ -95,52 +101,60 @@ public class Test {
                             int feature_integral = haar_runner.featureSum(datapoint.image_mat, x, y, entry.getKey());
                             if (!thresholds.contains(feature_integral)){
                                 thresholds.add(feature_integral);
+                            }else{
+                                repeat_counter++;
                             }
                         }
 
                         //TODO implement optimisation of threshold to minimise objective function (error function)
-                        //for(int threshold : thresholds)
-                        Classifier classifier = new Classifier(entry.getKey(), 0);
+                        double min_error = Double.POSITIVE_INFINITY;
+                        double best_threshold = 0;
+                        for(int threshold : thresholds){
+                            Classifier classifier = new Classifier(entry.getKey(), threshold);
 
-                        List<Classifier> classifiers = new ArrayList<>();
-                        int true_positive = 0;
-                        int true_negative = 0;
-                        int false_positive = 0;
-                        int false_negative = 0;
+                            List<Classifier> classifiers = new ArrayList<>();
+                            int true_positive = 0;
+                            int true_negative = 0;
+                            int false_positive = 0;
+                            int false_negative = 0;
 
-                        for (DataPoint datapoint : training) {
-                            classifier.feature_integral = haar_runner.featureSum(datapoint.image_mat, x, y, entry.getKey());
-                            classifier.classify(datapoint);
+                            for (DataPoint datapoint : training) {
+                                classifier.feature_integral = haar_runner.featureSum(datapoint.image_mat, x, y, entry.getKey());
+                                classifier.classify(datapoint);
 
-                            classifiers.add(classifier);
-                        }
-
-                        //      Compute error of weak classifier: Sum of (Datapoint weight * loss function) where loss function = 0 if correct classification and 1 if not
-                        double error = 0;
-                        double current_total_weight = 0;
-                        for (DataPoint datapoint : training) {
-                            int loss = 1;
-                            if (classifier.classifications.get(datapoint) == datapoint.label) {
-                                loss = 0;
-                                if(datapoint.label == 1){
-                                    true_positive +=1;
-                                }else{
-                                    true_negative +=1;
-                                }
-                            }else{
-                                if(datapoint.label == 1){
-                                    false_negative +=1;
-                                }else{
-                                    false_positive +=1;
-                                }
+                                classifiers.add(classifier);
                             }
-                            current_total_weight += datapoint.weight;
-                            error += datapoint.weight * loss;
-                        }
-                        error /= current_total_weight;
+
+                            //      Compute error of weak classifier: Sum of (Datapoint weight * loss function) where loss function = 0 if correct classification and 1 if not
+                            double error = 0;
+                            double current_total_weight = 0;
+                            for (DataPoint datapoint : training) {
+                                int loss = 1;
+                                if (classifier.classifications.get(datapoint) == datapoint.label) {
+                                    loss = 0;
+                                    if(datapoint.label == 1){
+                                        true_positive +=1;
+                                    }else{
+                                        true_negative +=1;
+                                    }
+                                }else{
+                                    if(datapoint.label == 1){
+                                        false_negative +=1;
+                                    }else{
+                                        false_positive +=1;
+                                    }
+                                }
+                                current_total_weight += datapoint.weight;
+                                error += datapoint.weight * loss;
+                            }
+                            error /= current_total_weight;
+                            if(error < min_error){
+                                min_error = error;
+                                best_threshold = threshold;
+                            }
 //                        System.out.println("Error: " + error);
 
-                        // Classification metrics
+                            // Classification metrics
 //                        double recall = (double) true_positive / (true_positive+false_negative);
 //                        double precision = (double) true_positive / (true_positive+false_positive);
 //                        double accuracy = (double) (true_positive + true_negative)/(true_positive+true_negative+false_positive+false_negative);
@@ -148,32 +162,47 @@ public class Test {
 //
 //                        System.out.println("Recall: " + recall + "\tPrecision: " + precision + "\tAccuracy: " + accuracy + "\tF1 Score: " + f1score);
 
-                        //      choose coefficient alpha_t of classifier denoted by alpha_t = (0.5 * ln( (1 - error_t)/error_t )
-                        double alpha = 0.5 * Math.log((1 - error) / error);
-                        //System.out.println("Alpha: " + alpha);
+                            //      choose coefficient alpha_t of classifier denoted by alpha_t = (0.5 * ln( (1 - error_t)/error_t )
+                            double alpha = 0.5 * Math.log((1 - error) / error);
+                            //System.out.println("Alpha: " + alpha);
 
-                        //      update weights from step 1 for each datapoint:
-                        //          weight for next round = weight * exp(-alpha_t * label of that datapoint * classification of h_t for that datapoint)
-                        double next_total_weight = 0;
-                        for (DataPoint dataPoint : training) {
-                            double d_weight = dataPoint.weight * Math.exp(-alpha * dataPoint.label * classifier.classifications.get(dataPoint));
-                            next_total_weight += d_weight;
-                            dataPoint.weight = d_weight;
-                        }
+                            //      update weights from step 1 for each datapoint:
+                            //          weight for next round = weight * exp(-alpha_t * label of that datapoint * classification of h_t for that datapoint)
+                            double next_total_weight = 0;
+                            for (DataPoint dataPoint : training) {
+                                double d_weight = dataPoint.weight * Math.exp(-alpha * dataPoint.label * classifier.classifications.get(dataPoint));
+                                next_total_weight += d_weight;
+                                dataPoint.weight = d_weight;
+                            }
 
-                        //      normalise weights: (weight for next round / sum of all weights for next round)
-                        for (DataPoint dataPoint : training) {
-                            dataPoint.weight /= next_total_weight;
+                            //      normalise weights: (weight for next round / sum of all weights for next round)
+                            for (DataPoint dataPoint : training) {
+                                dataPoint.weight /= next_total_weight;
+                            }
                         }
+                        HaarFeature best_feature = new HaarFeature(entry.getKey().matrix,entry.getKey().feature_type, entry.getKey().coords, entry.getKey().scalar);
+                        best_feature.x = x;
+                        best_feature.y = y;
+                        best_feature.threshold = best_threshold;
+                        best_feature.threshold_error = min_error;
+
+                        best_features.add(best_feature);
 
                         final long endTime = System.currentTimeMillis();
                         System.out.println("Execution time for feature: " + (endTime - startTime) + "ms");
                     }
                 }
             }
-        }
-        // 3. Output the final classifier H(x)
 
+            for(HaarFeature feature : best_features){
+                feature.toFile(fw);
+            }
+            fw.close();
+
+            System.out.println("#features: " + haar_features.size() + " #thresholds: " + best_features.size());
+        }
+        System.out.println("Repeat counter: " + repeat_counter);
+        // 3. Output the final classifier H(x)
 
     }
 }
