@@ -101,15 +101,7 @@ public class RunNewHaar {
     public int featureSum(int[][] int_img_mat, int x, int y, HaarFeature feature){
         //TODO: Might need to -1 from x and y if array out of bounds error not sure yet
 
-        // Took out of the if statement for now
-//        FixImage run1 = new FixImage(imagePath);
-//        run1.makeGrayScale(); // This is to transform an image from rgb to greyscale
-//        BufferedImage curr_image = run1.resizeImage(imageSize,imageSize);
-
-//        int[][] img_mat = IntegralImage.asMatrix(curr_image);
-//        int[][] int_img_mat = IntegralImage.integralImage(img_mat); // This is the integral image as a matrix of current image
-
-        readIm(); // This reads the resized image so we can use its pixels later
+        //readIm(); // This reads the resized image so we can use its pixels later
 
         // INTEGRAL CALCULATION
         // To find the sum of an area: C + A - B - D, where A-D are the corners of a rectangle starting top left in
