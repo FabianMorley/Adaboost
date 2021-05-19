@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Adaboost {
-    int n_classifiers;
-    List<DecisionStump> classifiers;
+    public int n_classifiers;
+    public List<DecisionStump> classifiers;
 
     public Adaboost(int n_classifiers){
         this.n_classifiers = n_classifiers;

@@ -6,13 +6,14 @@ import camera.Haar.RunNewHaar;
 import camera.Processing.IntegralImage;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
 
 public class AdaboostRun {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         // Load dataset
         List<DataPoint> dataset = load("src/camera/Adaboost/data/neg","src/camera/Adaboost/data/pos");
@@ -21,7 +22,7 @@ public class AdaboostRun {
         clean(dataset, 24);
 
         // Split into training and test data
-        System.out.println("Split dataset");
+        System.out.println("Splitting dataset");
         Collections.shuffle(dataset); // Shuffle dataset randomly
 
         double data_split = 0.1;
@@ -39,15 +40,22 @@ public class AdaboostRun {
         }
 
         // 3. Get all of the possible Haar features
-        System.out.println("Create Haar features");
-        final long sTime3 = System.currentTimeMillis();
-
+        System.out.println("Creating Haar features");
         RunNewHaar haar_runner = new RunNewHaar();
         List<HaarFeature> haar_features = haar_runner.runner();
 
         // ADABOOST
+        System.out.println("Adaboost training");
+        final long sTime1 = System.currentTimeMillis();
+
         Adaboost classifier = new Adaboost(5);
         classifier.fit(training, haar_features);
+
+        final long eTime1 = System.currentTimeMillis();
+        System.out.println("Adaboost trained - " + (eTime1 - sTime1) + "ms");
+
+        System.out.println("Adaboost testing");
+        final long sTime2 = System.currentTimeMillis();
 
         int[] clf_predictions = new int[test.size()];
         int[] test_labels = new int[test.size()];
@@ -57,8 +65,31 @@ public class AdaboostRun {
            test_labels[i] = test.get(i).label;
         }
 
-        // GET ACCURACY OF PREDICTION
+        final long eTime2 = System.currentTimeMillis();
+        System.out.println("Adaboost tested - " + (eTime2 - sTime2) + "ms");
+
+        // Generate metrics for strong classifier H(x)
         metrics(clf_predictions,test_labels);
+
+        // Save strong classifier
+        FileWriter fw = new FileWriter("strong_classifier.txt");
+
+        for(DecisionStump weak_clf : classifier.classifiers){
+            int polarity = weak_clf.polarity;
+            int threshold = weak_clf.threshold;
+            double alpha = weak_clf.alpha;
+
+            HaarFeature feature = weak_clf.feature;
+            int feature_type = feature.feature_type;
+            int x_scalar = feature.x_scalar;
+            int y_scalar = feature.y_scalar;
+            int x_pos = feature.x;
+            int y_pos = feature.y;
+
+            fw.write("polarity:"+polarity+",threshold:"+threshold+",alpha:"+alpha+",feature_type:"+feature_type+",x_scalar:"+x_scalar+",y_scalar:"+y_scalar+",x_pos:"+x_pos+",y_pos:"+y_pos+"\n");
+        }
+        fw.close();
+
     }
 
     public static List<DataPoint> load(String neg_path, String pos_path){
