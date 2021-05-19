@@ -1,5 +1,6 @@
-package camera.Adaboost;
+package camera.Adaboost.old;
 
+import camera.Adaboost.DataPoint;
 import camera.Haar.HaarFeature;
 
 import java.util.ArrayList;
