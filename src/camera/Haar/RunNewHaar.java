@@ -40,7 +40,7 @@ public class RunNewHaar {
 //        }
 
         // Serves as an iterator to see how many times we can increase size of features
-        int iterations = (int) imageSize/4; // divide by 4 ensures no feature will outsize the image
+        int iterations = (int) imageSize/3; // divide by 4 ensures no feature will outsize the image
         System.out.println("Iterations for size of Haar features: " + (iterations));
         //iterations = 1; // Just used to avoid computational overload
 
@@ -52,6 +52,7 @@ public class RunNewHaar {
         // Per iteration the size of the features increase
         for(int roundx = 1; roundx<iterations; roundx++) { // Represents the increase in size for each feature
             for(int roundy = 1; roundy<iterations; roundy++) {
+
                 MakeFeatures run2 = new MakeFeatures(roundx,roundy);
                 haarFeatures = run2.createHaarPixel(roundx,roundy); // Now we have the four de Haar types
 
@@ -60,14 +61,17 @@ public class RunNewHaar {
                 int[][] type3 = (int[][]) haarFeatures[1]; // White black white horizontal
                 int[][] type4 = rotateFeature(type3, 1); // White black white vertical
                 int[][] type5 = (int[][]) haarFeatures[2]; // Black and white diagonals
+                int[][][] types = {type1, type2, type3, type4, type5};
 
+                //Can outcomment these
+                /*
+                printArray(type1);
+                printArray(type2);
+                printArray(type3);
+                printArray(type4);
+                printArray(type5);
 
-                // Can outcomment these
-//            printArray(type1);
-//            printArray(type2);
-//            printArray(type3);
-//            printArray(type4);
-//            printArray(type5);
+                 */
 
                 // This coordinate system represents from 0 up until that height and length, so for example
                 // type 1 would go from coordinate = (0,0) to coordinate b = (coor1[0], coor1[1]) and everything in between
@@ -78,24 +82,21 @@ public class RunNewHaar {
                 int[] coor3 = {imageSize - type3.length, imageSize - type3[0].length};
                 int[] coor4 = {imageSize - type4.length, imageSize - type4[0].length};
                 int[] coor5 = {imageSize - type5.length, imageSize - type5[0].length};
+                int[][] coordinates = {coor1, coor2, coor3, coor4, coor5};
 
-                HaarFeature f1 = new HaarFeature(type1, 1, coor1, roundx,roundy);
-                HaarFeature f2 = new HaarFeature(type2, 2, coor2, roundx,roundy);
-                HaarFeature f3 = new HaarFeature(type3, 3, coor3, roundx,roundy);
-                HaarFeature f4 = new HaarFeature(type4, 4, coor4, roundx,roundy);
-                HaarFeature f5 = new HaarFeature(type5, 5, coor5, roundx,roundy);
+                // This triple loop will iterate each feature, and it will go through every single coordinate that feature can hold
+                for(int k = 0; k<types.length; k++){
+                    int[] temp = coordinates[k];
+                    for (int m = 0; m<temp[1]; m++ ) {
+                        for (int n = 0; n < temp[0]; n++) {
+                            int[] currentCoor = {n,m};
+                            HaarFeature addUp = new HaarFeature(types[k], (k+1),currentCoor, roundx, roundy);
+                            featureList.add(addUp);
+                            my_dict.put(addUp, currentCoor);
+                        }
+                    }
+                }
 
-                featureList.add(f1);
-                featureList.add(f2);
-                featureList.add(f3);
-                featureList.add(f4);
-                featureList.add(f5);
-
-                my_dict.put(f1, coor1);
-                my_dict.put(f2, coor2);
-                my_dict.put(f3, coor3);
-                my_dict.put(f4, coor4);
-                my_dict.put(f5, coor5);
 
                 //  Must be a way to use the 2d array of sums, possible save/recognize the features and locations based on threshold
                 // Continue on Viola Jones algorithm
@@ -103,7 +104,8 @@ public class RunNewHaar {
             }
         }
 
-//        System.out.println("Size of dictionary: " + my_dict.size());
+
+        System.out.println("Size of list: " + featureList.size());
 //        return my_dict;
         return featureList;
     }

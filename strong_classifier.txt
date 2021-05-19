@@ -1,5 +1,5 @@
-polarity:-1,threshold:-10,alpha:0.5657010557250518,feature_type:2,x_scalar:2,y_scalar:5,x_pos:14,y_pos:22
-polarity:1,threshold:2,alpha:0.31388845240728414,feature_type:5,x_scalar:5,y_scalar:5,x_pos:14,y_pos:14
-polarity:-1,threshold:-4,alpha:0.21868214087564203,feature_type:5,x_scalar:4,y_scalar:5,x_pos:16,y_pos:14
-polarity:-1,threshold:19,alpha:0.24608742791397636,feature_type:3,x_scalar:2,y_scalar:2,x_pos:22,y_pos:18
-polarity:-1,threshold:-3,alpha:0.2657948040174454,feature_type:2,x_scalar:3,y_scalar:3,x_pos:18,y_pos:21
+polarity:1,threshold:9,alpha:0.7816601151406938,feature_type:5,x_scalar:7,y_scalar:4,x_pos:0,y_pos:0
+polarity:1,threshold:7,alpha:0.5171099257201475,feature_type:2,x_scalar:3,y_scalar:3,x_pos:14,y_pos:7
+polarity:-1,threshold:-3,alpha:0.520514514381149,feature_type:5,x_scalar:5,y_scalar:5,x_pos:13,y_pos:6
+polarity:-1,threshold:20,alpha:0.38316406614033816,feature_type:4,x_scalar:3,y_scalar:2,x_pos:5,y_pos:1
+polarity:-1,threshold:-6,alpha:0.4772981678809319,feature_type:2,x_scalar:3,y_scalar:4,x_pos:14,y_pos:20

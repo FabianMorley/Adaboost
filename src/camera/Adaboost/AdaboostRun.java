@@ -13,7 +13,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class AdaboostRun {
+    public static FileWriter fw;
+
     public static void main(String[] args) throws IOException {
+        // Initialise strong classifier storage
+        fw = new FileWriter("strong_classifier.txt");
 
         // Load dataset
         List<DataPoint> dataset = load("src/camera/Adaboost/data/neg","src/camera/Adaboost/data/pos");
@@ -48,7 +52,7 @@ public class AdaboostRun {
         System.out.println("Adaboost training");
         final long sTime1 = System.currentTimeMillis();
 
-        Adaboost classifier = new Adaboost(5);
+        Adaboost classifier = new Adaboost(500);
         classifier.fit(training, haar_features);
 
         final long eTime1 = System.currentTimeMillis();
@@ -71,24 +75,23 @@ public class AdaboostRun {
         // Generate metrics for strong classifier H(x)
         metrics(clf_predictions,test_labels);
 
-        // Save strong classifier
-        FileWriter fw = new FileWriter("strong_classifier.txt");
-
-        for(DecisionStump weak_clf : classifier.classifiers){
-            int polarity = weak_clf.polarity;
-            int threshold = weak_clf.threshold;
-            double alpha = weak_clf.alpha;
-
-            HaarFeature feature = weak_clf.feature;
-            int feature_type = feature.feature_type;
-            int x_scalar = feature.x_scalar;
-            int y_scalar = feature.y_scalar;
-            int x_pos = feature.x;
-            int y_pos = feature.y;
-
-            fw.write("polarity:"+polarity+",threshold:"+threshold+",alpha:"+alpha+",feature_type:"+feature_type+",x_scalar:"+x_scalar+",y_scalar:"+y_scalar+",x_pos:"+x_pos+",y_pos:"+y_pos+"\n");
-        }
-        fw.close();
+//        // Save strong classifier
+//
+//        for(DecisionStump weak_clf : classifier.classifiers){
+//            int polarity = weak_clf.polarity;
+//            int threshold = weak_clf.threshold;
+//            double alpha = weak_clf.alpha;
+//
+//            HaarFeature feature = weak_clf.feature;
+//            int feature_type = feature.feature_type;
+//            int x_scalar = feature.x_scalar;
+//            int y_scalar = feature.y_scalar;
+//            int x_pos = feature.x;
+//            int y_pos = feature.y;
+//
+//            fw.write("polarity:"+polarity+",threshold:"+threshold+",alpha:"+alpha+",feature_type:"+feature_type+",x_scalar:"+x_scalar+",y_scalar:"+y_scalar+",x_pos:"+x_pos+",y_pos:"+y_pos+"\n");
+//        }
+//        fw.close();
 
     }
 

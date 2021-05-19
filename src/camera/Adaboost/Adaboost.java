@@ -3,6 +3,7 @@ package camera.Adaboost;
 import camera.Haar.HaarFeature;
 import camera.Haar.RunNewHaar;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,9 @@ public class Adaboost {
         }
 
         for(int i = 0; i < n_classifiers; i++){
+            System.out.println("Creating weak classifier " + i);
+            final long sTime1 = System.currentTimeMillis();
+
             // Iterate over all features and thresholds
             DecisionStump classifier = new DecisionStump();
 
@@ -95,6 +99,28 @@ public class Adaboost {
             }
 
             this.classifiers.add(classifier);
+
+            // Save strong classifier to file
+            int polarity_s = classifier.polarity;
+            int threshold_s = classifier.threshold;
+            double alpha_s = classifier.alpha;
+
+            HaarFeature feature = classifier.feature;
+            int feature_type = feature.feature_type;
+            int x_scalar = feature.x_scalar;
+            int y_scalar = feature.y_scalar;
+            int x_pos = feature.x;
+            int y_pos = feature.y;
+
+            try {
+                AdaboostRun.fw.write("polarity:"+polarity_s+",threshold:"+threshold_s+",alpha:"+alpha_s+",feature_type:"+feature_type+",x_scalar:"+x_scalar+",y_scalar:"+y_scalar+",x_pos:"+x_pos+",y_pos:"+y_pos+"\n");
+                AdaboostRun.fw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            final long eTime1 = System.currentTimeMillis();
+            System.out.println("Finished creating weak classifier " + i + " in " + (eTime1 - sTime1)/1000 + "s");
         }
 
     }

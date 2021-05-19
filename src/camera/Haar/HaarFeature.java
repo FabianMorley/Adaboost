@@ -5,7 +5,7 @@ public class HaarFeature {
     public int x_scalar;
     public int y_scalar;
     public int feature_type; // 1,2,3,4,5
-    public int[] coords; // Maximum coordinates
+    public int[] coords;
 
     public int x;
     public int y;
@@ -16,7 +16,7 @@ public class HaarFeature {
         this.coords = coords;
         this.x_scalar = x_scalar;
         this.y_scalar = y_scalar;
-        //TEMPORARY FOR TESTING
+
         this.x = coords[0];
         this.y = coords[1];
     }
