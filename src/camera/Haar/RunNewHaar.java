@@ -4,8 +4,10 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.List;
 
 import camera.Processing.IntegralImage;
 
@@ -28,7 +30,7 @@ public class RunNewHaar {
     /**
      * This is the main runner which can call image resize method
      */
-    public Hashtable<HaarFeature, int[]> runner() {
+    public List<HaarFeature> runner() {
 
 //        // If statement to reformat the image
 //        if (!correctImageFormat) {
@@ -43,6 +45,9 @@ public class RunNewHaar {
         //iterations = 1; // Just used to avoid computational overload
 
         Hashtable<HaarFeature, int[]> my_dict = new Hashtable<HaarFeature, int[]>();
+
+        // TEMPORARY
+        List<HaarFeature> featureList = new ArrayList<>();
 
         // Per iteration the size of the features increase
         for(int roundx = 1; roundx<iterations; roundx++) { // Represents the increase in size for each feature
@@ -67,17 +72,24 @@ public class RunNewHaar {
                 // This coordinate system represents from 0 up until that height and length, so for example
                 // type 1 would go from coordinate = (0,0) to coordinate b = (coor1[0], coor1[1]) and everything in between
                 //System.out.println(image.getWidth() + " " + image.getHeight());
-                int[] coor1 = {imageSize - type1.length + 1, imageSize - type1[0].length + 1};
-                int[] coor2 = {imageSize - type2.length + 1, imageSize - type2[0].length + 1};
-                int[] coor3 = {imageSize - type3.length + 1, imageSize - type3[0].length + 1};
-                int[] coor4 = {imageSize - type4.length + 1, imageSize - type4[0].length + 1};
-                int[] coor5 = {imageSize - type5.length + 1, imageSize - type5[0].length + 1};
+                // TODO make a for loop that adds each potential coordinate into HaarFeature object
+                int[] coor1 = {imageSize - type1.length, imageSize - type1[0].length};
+                int[] coor2 = {imageSize - type2.length, imageSize - type2[0].length};
+                int[] coor3 = {imageSize - type3.length, imageSize - type3[0].length};
+                int[] coor4 = {imageSize - type4.length, imageSize - type4[0].length};
+                int[] coor5 = {imageSize - type5.length, imageSize - type5[0].length};
 
                 HaarFeature f1 = new HaarFeature(type1, 1, coor1, roundx,roundy);
                 HaarFeature f2 = new HaarFeature(type2, 2, coor2, roundx,roundy);
                 HaarFeature f3 = new HaarFeature(type3, 3, coor3, roundx,roundy);
                 HaarFeature f4 = new HaarFeature(type4, 4, coor4, roundx,roundy);
                 HaarFeature f5 = new HaarFeature(type5, 5, coor5, roundx,roundy);
+
+                featureList.add(f1);
+                featureList.add(f2);
+                featureList.add(f3);
+                featureList.add(f4);
+                featureList.add(f5);
 
                 my_dict.put(f1, coor1);
                 my_dict.put(f2, coor2);
@@ -91,14 +103,15 @@ public class RunNewHaar {
             }
         }
 
-        System.out.println("Size of dictionary: " + my_dict.size());
-        return my_dict;
+//        System.out.println("Size of dictionary: " + my_dict.size());
+//        return my_dict;
+        return featureList;
     }
 
     /**
      * Calculates the integral sum for the current image for a given feature
      */
-    public int featureSum(int[][] int_img_mat, int x, int y, HaarFeature feature){
+    public static int featureSum(int[][] int_img_mat, int x, int y, HaarFeature feature){
         //readIm(); // This reads the resized image so we can use its pixels later
 
         // INTEGRAL CALCULATION

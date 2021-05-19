@@ -22,12 +22,14 @@ public class HaarFeature {
     public double fn;
 
     public HaarFeature(int[][] matrix, int feature_type, int[] coords, int x_scalar, int y_scalar){
-        //TODO x & y scalar not just total scalar
         this.matrix = matrix;
         this.feature_type = feature_type;
         this.coords = coords;
         this.x_scalar = x_scalar;
         this.y_scalar = y_scalar;
+        //TEMPORARY FOR TESTING
+        this.x = coords[0];
+        this.y = coords[1];
     }
 
     public void toFile(FileWriter fw) throws IOException {
