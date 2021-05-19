@@ -1,0 +1,5 @@
+polarity:-1,threshold:-10,alpha:0.5657010557250518,feature_type:2,x_scalar:2,y_scalar:5,x_pos:14,y_pos:22
+polarity:1,threshold:2,alpha:0.31388845240728414,feature_type:5,x_scalar:5,y_scalar:5,x_pos:14,y_pos:14
+polarity:-1,threshold:-4,alpha:0.21868214087564203,feature_type:5,x_scalar:4,y_scalar:5,x_pos:16,y_pos:14
+polarity:-1,threshold:19,alpha:0.24608742791397636,feature_type:3,x_scalar:2,y_scalar:2,x_pos:22,y_pos:18
+polarity:-1,threshold:-3,alpha:0.2657948040174454,feature_type:2,x_scalar:3,y_scalar:3,x_pos:18,y_pos:21

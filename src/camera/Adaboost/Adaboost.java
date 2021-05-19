@@ -105,8 +105,8 @@ public class Adaboost {
             classifier_predictions[i] = classifiers.get(i).predict(datapoint);
         }
         int prediction_sum = 0;
-        for(int prediction : classifier_predictions){
-            prediction_sum += prediction;
+        for (int j = 0; j < n_classifiers; j++){
+            prediction_sum += classifier_predictions[j];
         }
         return Integer.signum(prediction_sum);
     }
