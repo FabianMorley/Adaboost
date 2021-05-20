@@ -33,7 +33,7 @@ public class HaarFeature {
     public int[][] createMatrix(int type, int x_s, int y_s){
         switch(type){
             case 1:
-                int[][] type1 = new int[1*x_s][2*y_s];
+                int[][] type1 = new int[x_s][2*y_s];
                 for(int i = 0; i<type1.length; i++){
                     for(int j = 0; j<type1[0].length/2; j++){
                         type1[i][j] = 1;
@@ -41,7 +41,7 @@ public class HaarFeature {
                 }
                 return type1;
             case 2:
-                int[][] type2 = new int[1*x_s][2*y_s];
+                int[][] type2 = new int[x_s][2*y_s];
                 for(int i = 0; i<type2.length; i++){
                     for(int j = 0; j<type2[0].length/2; j++){
                         type2[i][j] = 1;
@@ -50,7 +50,7 @@ public class HaarFeature {
                 type2 = rotateFeature(type2, 1);
                 return type2;
             case 3:
-                int[][] type3 = new int[1*x_s][3*y_s];
+                int[][] type3 = new int[x_s][3*y_s];
                 for(int i = 0; i<type3.length; i++){
                     for(int j = 0; j<type3[0].length/3; j++){
                         type3[i][j] = 1;
@@ -61,29 +61,29 @@ public class HaarFeature {
                 }
                 return type3;
             case 4:
-                int[][] type4 = new int[2*x_s][2*y_s];
-                for(int i = 0; i<type4.length/2; i++){
-                    for(int j = 0; j<type4[0].length/2; j++){
+                int[][] type4 = new int[x_s][3*y_s];
+                for(int i = 0; i<type4.length; i++){
+                    for(int j = 0; j<type4[0].length/3; j++){
+                        type4[i][j] = 1;
+                    }
+                    for(int j = 2*(type4[0].length/3); j<type4[0].length; j++){
                         type4[i][j] = 1;
                     }
                 }
-                for(int i = type4.length/2; i<type4.length; i++){
-                    for(int j = type4[0].length/2; j<type4[0].length; j++){
-                        type4[i][j] = 1;
-                    }
-                }
+                type4 = rotateFeature(type4, 1);
                 return type4;
             case 5:
-                int[][] type5 = new int[1*x_s][3*y_s];
-                for(int i = 0; i<type5.length; i++){
-                    for(int j = 0; j<type5[0].length/3; j++){
-                        type5[i][j] = 1;
-                    }
-                    for(int j = 2*(type5[0].length/3); j<type5[0].length; j++){
+                int[][] type5 = new int[2*x_s][2*y_s];
+                for(int i = 0; i<type5.length/2; i++){
+                    for(int j = 0; j<type5[0].length/2; j++){
                         type5[i][j] = 1;
                     }
                 }
-                type5 = rotateFeature(type5, 1);
+                for(int i = type5.length/2; i<type5.length; i++){
+                    for(int j = type5[0].length/2; j<type5[0].length; j++){
+                        type5[i][j] = 1;
+                    }
+                }
                 return type5;
         }
         return null;

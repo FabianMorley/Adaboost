@@ -12,4 +12,12 @@ public class DataPoint {
         this.imagePath = imagePath;
         this.label = label;
     }
+
+    /**
+     * Unknown label
+     * @param imagePath
+     */
+    DataPoint(String imagePath){
+        this.imagePath = imagePath;
+    }
 }

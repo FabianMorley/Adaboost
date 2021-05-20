@@ -259,6 +259,9 @@ public class RunNewHaar {
             }
         }catch (IndexOutOfBoundsException e){
             System.out.println("Index Out of Bounds for feature type: " +feature.feature_type+ " dimensions: (" +width + ", " +height+ ") for Position: (" + x + ", " + y + ")");
+            for(int i = 0; i < feature.matrix.length; i++){
+                System.out.println(Arrays.toString(feature.matrix[i]));
+            }
         }
         return 0;
     }
