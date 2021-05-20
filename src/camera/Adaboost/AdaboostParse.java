@@ -26,12 +26,27 @@ public class AdaboostParse {
         // Clean image
         int imageSize = 24;
         FixImage fixImage = new FixImage();
+
+        // Do this for every datapoint
         fixImage.makeGrayScale(test1.imagePath);
         int[][] img_mat = IntegralImage.asMatrix(fixImage.resizeImage(imageSize, imageSize));
         test1.image_mat = IntegralImage.integralImage(img_mat);
+        // end
 
         // Make prediction
         int prediction = predict(test1, weak_clfs);
+
+        /**
+         * If you have more than one prediction
+         * int[] predictions = new int[num of predictions]
+         *
+         * int prediction_sum = 0;
+         * for(int i = 0; i < predictions.length; i++){
+         *      prediction_sum += predictions[i];
+         * }
+         *
+         * int prediction = Math.signum(prediction_sum) // Gets the sign of the sum
+         */
 
         // Output result of prediction
         if(prediction == 1){
