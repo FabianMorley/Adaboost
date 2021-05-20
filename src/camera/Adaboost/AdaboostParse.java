@@ -18,9 +18,10 @@ public class AdaboostParse {
         List<DecisionStump> weak_clfs = parse("strong_classifier200_1.txt");
 
         // Download image from camera screenshot and save its path
+        // Screenshot 5-10 and take average prediction
 
         // Create a datapoint out of image(s) to test
-        DataPoint test1 = new DataPoint("obama.jpg");
+        DataPoint test1 = new DataPoint("kanye.jpg");
 
         // Clean image
         int imageSize = 24;
@@ -35,8 +36,10 @@ public class AdaboostParse {
         // Output result of prediction
         if(prediction == 1){
             System.out.println("Face detected");
-        }else{
+        }else if(prediction == -1){
             System.out.println("No face detected");
+        }else{
+            System.out.println("Inconclusive");
         }
 
     }
@@ -87,6 +90,7 @@ public class AdaboostParse {
         for (int j = 0; j < n_classifiers; j++){
             prediction_sum += classifier_predictions[j];
         }
+        System.out.println(prediction_sum);
         return Integer.signum(prediction_sum);
     }
 }

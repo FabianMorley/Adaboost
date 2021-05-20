@@ -1,7 +1,5 @@
 package camera.Adaboost;
 
-import java.awt.image.BufferedImage;
-
 public class DataPoint {
     public String imagePath;
     public int label;
