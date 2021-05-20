@@ -40,7 +40,7 @@ public class RunNewHaar {
 //        }
 
         // Serves as an iterator to see how many times we can increase size of features
-        int iterations = (int) imageSize/3; // divide by 4 ensures no feature will outsize the image
+        int iterations = (int) imageSize; // divide by 4 ensures no feature will outsize the image
         System.out.println("Iterations for size of Haar features: " + (iterations));
         //iterations = 1; // Just used to avoid computational overload
 
@@ -53,6 +53,7 @@ public class RunNewHaar {
         for(int roundx = 1; roundx<iterations; roundx++) { // Represents the increase in size for each feature
             for(int roundy = 1; roundy<iterations; roundy++) {
 
+
                 MakeFeatures run2 = new MakeFeatures(roundx,roundy);
                 haarFeatures = run2.createHaarPixel(roundx,roundy); // Now we have the four de Haar types
 
@@ -61,7 +62,11 @@ public class RunNewHaar {
                 int[][] type3 = (int[][]) haarFeatures[1]; // White black white horizontal
                 int[][] type4 = rotateFeature(type3, 1); // White black white vertical
                 int[][] type5 = (int[][]) haarFeatures[2]; // Black and white diagonals
+
+
                 int[][][] types = {type1, type2, type3, type4, type5};
+
+
 
                 //Can outcomment these
                 /*
@@ -74,9 +79,7 @@ public class RunNewHaar {
                  */
 
                 // This coordinate system represents from 0 up until that height and length, so for example
-                // type 1 would go from coordinate = (0,0) to coordinate b = (coor1[0], coor1[1]) and everything in between
-                //System.out.println(image.getWidth() + " " + image.getHeight());
-                // TODO make a for loop that adds each potential coordinate into HaarFeature object
+                // type 1 would go from coordinate a = (0,0) to coordinate b = (coor1[0], coor1[1]) and everything in between
                 int[] coor1 = {imageSize - type1.length, imageSize - type1[0].length};
                 int[] coor2 = {imageSize - type2.length, imageSize - type2[0].length};
                 int[] coor3 = {imageSize - type3.length, imageSize - type3[0].length};
@@ -87,14 +90,17 @@ public class RunNewHaar {
                 // This triple loop will iterate each feature, and it will go through every single coordinate that feature can hold
                 for(int k = 0; k<types.length; k++){
                     int[] temp = coordinates[k];
-                    for (int m = 0; m<temp[1]; m++ ) {
-                        for (int n = 0; n < temp[0]; n++) {
-                            int[] currentCoor = {n,m};
-                            HaarFeature addUp = new HaarFeature(types[k], (k+1),currentCoor, roundx, roundy);
-                            featureList.add(addUp);
-                            my_dict.put(addUp, currentCoor);
+                    if(temp[0]>=0 && temp[1]>=0) {
+                        for (int m = 0; m < temp[1]+1; m++) {
+                            for (int n = 0; n < temp[0]+1; n++) {
+                                int[] currentCoor = {n, m};
+                                HaarFeature addUp = new HaarFeature(types[k], (k + 1), currentCoor, roundx, roundy);
+                                featureList.add(addUp);
+                                my_dict.put(addUp, currentCoor);
+                            }
                         }
                     }
+
                 }
 
 
@@ -106,6 +112,7 @@ public class RunNewHaar {
 
 
         System.out.println("Size of list: " + featureList.size());
+
 //        return my_dict;
         return featureList;
     }

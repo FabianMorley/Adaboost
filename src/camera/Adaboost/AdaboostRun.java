@@ -52,7 +52,7 @@ public class AdaboostRun {
         System.out.println("Adaboost training");
         final long sTime1 = System.currentTimeMillis();
 
-        Adaboost classifier = new Adaboost(200);
+        Adaboost classifier = new Adaboost(1000);
         classifier.fit(training, haar_features);
 
         final long eTime1 = System.currentTimeMillis();
