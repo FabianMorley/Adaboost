@@ -29,7 +29,7 @@ public class AdaboostRun {
         System.out.println("Splitting dataset");
         Collections.shuffle(dataset); // Shuffle dataset randomly
 
-        double data_split = 0.1;
+        double data_split = 0.2;
         int split_index = (int) (dataset.size()*data_split);
 
         List<DataPoint> training = new ArrayList<>();
@@ -52,7 +52,7 @@ public class AdaboostRun {
         System.out.println("Adaboost training");
         final long sTime1 = System.currentTimeMillis();
 
-        Adaboost classifier = new Adaboost(500);
+        Adaboost classifier = new Adaboost(200);
         classifier.fit(training, haar_features);
 
         final long eTime1 = System.currentTimeMillis();
@@ -91,8 +91,10 @@ public class AdaboostRun {
 //
 //            fw.write("polarity:"+polarity+",threshold:"+threshold+",alpha:"+alpha+",feature_type:"+feature_type+",x_scalar:"+x_scalar+",y_scalar:"+y_scalar+",x_pos:"+x_pos+",y_pos:"+y_pos+"\n");
 //        }
-//        fw.close();
+        fw.close();
 
+        //TODO: txt file to DecisionStump chain
+        // & single prediction
     }
 
     public static List<DataPoint> load(String neg_path, String pos_path){
@@ -136,7 +138,7 @@ public class AdaboostRun {
         }
 
         final long eTime2 = System.currentTimeMillis();
-        System.out.println("Cleaned dataset - " + (eTime2 - sTime2) + "ms");
+        System.out.println("Cleaned dataset - " + (eTime2 - sTime2)/1000 + "s");
     }
 
     public static void metrics(int[] predicted, int[] labels){

@@ -15,6 +15,20 @@ public class DecisionStump {
         this.polarity = 1;
     }
 
+    /**
+     * For creating an already generated weak classifier.
+     * @param polarity
+     * @param feature
+     * @param threshold
+     * @param alpha
+     */
+    public DecisionStump(int polarity, HaarFeature feature, int threshold, double alpha){
+        this.polarity = polarity;
+        this.feature = feature;
+        this.threshold = threshold;
+        this.alpha = alpha;
+    }
+
     public int[] predict(List<DataPoint> datapoints){
         int x = feature.x;
         int y = feature.y;

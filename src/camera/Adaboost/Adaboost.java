@@ -31,7 +31,7 @@ public class Adaboost {
         }
 
         for(int i = 0; i < n_classifiers; i++){
-            System.out.println("Creating weak classifier " + i);
+            System.out.println("Creating weak classifier " + (i+1));
             final long sTime1 = System.currentTimeMillis();
 
             // Iterate over all features and thresholds
@@ -114,13 +114,13 @@ public class Adaboost {
 
             try {
                 AdaboostRun.fw.write("polarity:"+polarity_s+",threshold:"+threshold_s+",alpha:"+alpha_s+",feature_type:"+feature_type+",x_scalar:"+x_scalar+",y_scalar:"+y_scalar+",x_pos:"+x_pos+",y_pos:"+y_pos+"\n");
-                AdaboostRun.fw.close();
+                AdaboostRun.fw.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             final long eTime1 = System.currentTimeMillis();
-            System.out.println("Finished creating weak classifier " + i + " in " + (eTime1 - sTime1)/1000 + "s");
+            System.out.println("Finished creating weak classifier " + (i+1) + " in " + (eTime1 - sTime1)/1000 + "s");
         }
 
     }
