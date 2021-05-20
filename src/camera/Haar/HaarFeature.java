@@ -41,7 +41,14 @@ public class HaarFeature {
                 }
                 return type1;
             case 2:
-                //return type2;
+                int[][] type2 = new int[1*x_s][2*y_s];
+                for(int i = 0; i<type2.length; i++){
+                    for(int j = 0; j<type2[0].length/2; j++){
+                        type2[i][j] = 1;
+                    }
+                }
+                type2 = rotateFeature(type2, 1);
+                return type2;
             case 3:
                 int[][] type3 = new int[1*x_s][3*y_s];
                 for(int i = 0; i<type3.length; i++){
@@ -67,8 +74,47 @@ public class HaarFeature {
                 }
                 return type4;
             case 5:
-                //return type5;
+                int[][] type5 = new int[1*x_s][3*y_s];
+                for(int i = 0; i<type5.length; i++){
+                    for(int j = 0; j<type5[0].length/3; j++){
+                        type5[i][j] = 1;
+                    }
+                    for(int j = 2*(type5[0].length/3); j<type5[0].length; j++){
+                        type5[i][j] = 1;
+                    }
+                }
+                type5 = rotateFeature(type5, 1);
+                return type5;
         }
         return null;
+    }
+
+    /**
+     * Serves to rotate the feature a certain amount of times
+     * @param rotateIt
+     * @param angle
+     * @return
+     */
+    public int[][] rotateFeature(int[][] rotateIt, int angle){
+
+        int[][] rotatedOne = null;
+
+        for(int k=0; k<angle; k++){
+
+            int height = rotateIt.length;
+            int width = rotateIt[0].length;
+            rotatedOne = new int[width][height];
+
+            for(int i = 0 ; i < width; i++){
+                for(int j = 0 ; j < height; j++){
+                    //rotatedOne[i][j] = rotateIt[height-j-1][i];
+                    rotatedOne[i][j] = rotateIt[j][i];
+
+                }
+            }
+            rotateIt = rotatedOne;
+        }
+
+        return rotatedOne;
     }
 }
