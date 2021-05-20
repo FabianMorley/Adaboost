@@ -16,13 +16,43 @@ public class FixImage {
 
     }
 
+
+    /**
+     * Makes a square image by removing an equal portion on both sides
+     */
+    public void makeSquare(String pathName){
+
+        System.out.println("Making Square image");
+        try {
+            File input = new File(pathName);
+            BufferedImage image = ImageIO.read(input);
+
+            int height = image.getHeight();
+            int width = image.getWidth();
+
+            int delta = Math.abs(width-height)/2; // Amount we will be taking off each side
+            int diff = image.getWidth()-2*delta;
+
+            BufferedImage result = image.getSubimage(delta, 0, diff, image.getHeight());
+
+            File output = new File("src/camera/images/square.jpg");
+            ImageIO.write(result, "jpg", output);
+
+        }  catch (IOException e) {
+
+            e.printStackTrace();
+        }
+
+    }
+
+
     /**
      *
      */
-    public BufferedImage makeGrayScale(String pathName){
+    public void makeGrayScale(){
         //System.out.println("Transforming image");
         try {
-            File input = new File(pathName);
+            File input = new File("src/camera/images/square.jpg");
             BufferedImage image = ImageIO.read(input);
 
             BufferedImage result = new BufferedImage(
@@ -49,13 +79,11 @@ public class FixImage {
 
             File output = new File("src/camera/images/grey.jpg");
             ImageIO.write(result, "jpg", output);
-            return result;
 
         }  catch (IOException e) {
 
             e.printStackTrace();
         }
-        return null;
     }
 
     /**

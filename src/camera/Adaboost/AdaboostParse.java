@@ -28,7 +28,8 @@ public class AdaboostParse {
         FixImage fixImage = new FixImage();
 
         // Do this for every datapoint
-        fixImage.makeGrayScale(test1.imagePath);
+        fixImage.makeSquare(test1.imagePath);
+        fixImage.makeGrayScale();
         int[][] img_mat = IntegralImage.asMatrix(fixImage.resizeImage(imageSize, imageSize));
         test1.image_mat = IntegralImage.integralImage(img_mat);
         // end

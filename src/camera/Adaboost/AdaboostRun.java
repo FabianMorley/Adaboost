@@ -132,7 +132,8 @@ public class AdaboostRun {
 
         FixImage fixImage = new FixImage();
         for (DataPoint point : dataset){
-            fixImage.makeGrayScale(point.imagePath);
+            fixImage.makeSquare(point.imagePath);
+            fixImage.makeGrayScale();
             int[][] img_mat = IntegralImage.asMatrix(fixImage.resizeImage(imageSize,imageSize));
             point.image_mat = IntegralImage.integralImage(img_mat); // This is the integral image as a matrix of current image
         }
