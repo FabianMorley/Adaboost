@@ -21,7 +21,7 @@ public class AdaboostParse {
         // Screenshot 5-10 and take average prediction
 
         // Create a datapoint out of image(s) to test
-        DataPoint test1 = new DataPoint("kanye.jpg");
+        DataPoint test1 = new DataPoint("obama.jpg");
 
         // Clean image
         int imageSize = 24;

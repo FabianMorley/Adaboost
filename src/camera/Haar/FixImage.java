@@ -22,7 +22,7 @@ public class FixImage {
      */
     public void makeSquare(String pathName){
 
-        System.out.println("Making Square image");
+        //System.out.println("Making Square image " + pathName);
         try {
             File input = new File(pathName);
             BufferedImage image = ImageIO.read(input);
