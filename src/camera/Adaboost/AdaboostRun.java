@@ -23,7 +23,7 @@ public class AdaboostRun {
         List<DataPoint> dataset = load("src/camera/Adaboost/data/neg","src/camera/Adaboost/data/pos");
 
         // Clean dataset
-        clean(dataset, 24);
+        //clean(dataset, 24);
 
         // Split into training and test data
         System.out.println("Splitting dataset");
@@ -42,6 +42,9 @@ public class AdaboostRun {
                 training.add(dataset.get(i));
             }
         }
+
+        clean(training, 24);
+
 
         // 3. Get all of the possible Haar features
         System.out.println("Creating Haar features");

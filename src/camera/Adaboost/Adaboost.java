@@ -23,7 +23,7 @@ public class Adaboost {
      */
     public void fit(List<DataPoint> training_data, List<HaarFeature> features){
         double samples_n = training_data.size();
-        double features_n = features.size();
+        //double features_n = features.size();
 
         // Initialise weights
         for(DataPoint datapoint : training_data){
@@ -31,18 +31,17 @@ public class Adaboost {
         }
 
         for(int i = 0; i < n_classifiers; i++){
-            System.out.println("Creating weak classifier " + (i+1));
+            System.out.println("Creating weak classifier (" + (i+1) + "/" + n_classifiers + ")");
             final long sTime1 = System.currentTimeMillis();
 
             // Iterate over all features and thresholds
             DecisionStump classifier = new DecisionStump();
 
             double min_error = Double.MAX_VALUE;
+            int feature_num = 1;
             for (HaarFeature feature : features){
-
                 // Get all potential thresholds with unique values
                 List<Integer> thresholds = new ArrayList<>();
-
                 for(DataPoint datapoint : training_data){
                     int feature_integral = RunNewHaar.featureSum(datapoint.image_mat,feature.x,feature.y,feature);
                     if (!thresholds.contains(feature_integral)){
@@ -61,7 +60,7 @@ public class Adaboost {
                         }
                     }
 
-                    double error = 0; // Error is the sum of missclassified weights
+                    double error = 0; // Error is the sum of misclassified weights
                     for(int j = 0; j < samples_n; j++){
                         if (predictions[j] != training_data.get(j).label){
                             error += training_data.get(j).weight;
@@ -79,7 +78,8 @@ public class Adaboost {
                         classifier.feature = feature;
                     }
                 }
-
+                System.out.print("Haar Feature ("+ feature_num + "/" + features.size() + ") - "  + (System.currentTimeMillis() - sTime1)/1000 + "s"+ "\r");
+                feature_num++;
             }
 
             // Calculate performance
